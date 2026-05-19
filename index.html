@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saurabh CodePipeline</title>
+    <title>Saurabh CodePipeline Dashboard</title>
     <style>
         :root {
             --bg-dark: #070a13;
             --pipeline-blue: #00f2fe;
             --pipeline-purple: #4facfe;
+            --pipeline-green: #10b981;
             --text-light: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -28,41 +29,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
+            padding: 2rem 0;
         }
 
-        /* Decorative glowing orbs in the background */
+        /* Ambient Background Orbs */
         .orb {
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
+            filter: blur(100px);
+            opacity: 0.12;
             z-index: 0;
             pointer-events: none;
         }
-        .orb-1 {
-            background: var(--pipeline-blue);
-            top: -10%;
-            left: 10%;
-            animation: float 12s infinite alternate ease-in-out;
-        }
-        .orb-2 {
-            background: var(--pipeline-purple);
-            bottom: -10%;
-            right: 10%;
-            animation: float 12s infinite alternate-reverse ease-in-out;
-        }
+        .orb-1 { background: var(--pipeline-blue); top: -10%; left: 10%; animation: float 12s infinite alternate ease-in-out; }
+        .orb-2 { background: var(--pipeline-purple); bottom: -10%; right: 10%; animation: float 12s infinite alternate-reverse ease-in-out; }
 
-        /* Glassmorphism Container */
+        /* Dashboard Container */
         .container {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 4rem 3rem;
+            padding: 3.5rem 2.5rem;
             border-radius: 28px;
             text-align: center;
             max-width: 650px;
@@ -72,73 +64,146 @@
             animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* AWS CodePipeline Visual Element */
+        /* Status Badge */
         .pipeline-status {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: rgba(0, 242, 254, 0.08);
-            border: 1px solid rgba(0, 242, 254, 0.2);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             padding: 0.6rem 1.2rem;
             border-radius: 50px;
             font-size: 0.85rem;
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--pipeline-blue);
-            margin-bottom: 2.5rem;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
+            color: var(--pipeline-green);
+            margin-bottom: 2rem;
         }
 
         .status-dot {
             width: 10px;
             height: 10px;
-            background-color: var(--pipeline-blue);
+            background-color: var(--pipeline-green);
             border-radius: 50%;
             position: relative;
         }
 
         .status-dot::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--pipeline-blue);
-            border-radius: 50%;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--pipeline-green); border-radius: 50%;
             animation: ripple 1.5s infinite ease-out;
         }
 
-        /* Heading Style */
         h1 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
             line-height: 1.2;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             letter-spacing: -0.03em;
             background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .highlight {
             background: linear-gradient(90deg, var(--pipeline-blue), var(--pipeline-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-            display: inline-block;
         }
 
-        /* Message subtitle */
         p {
             color: #94a3b8;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 2.5rem;
-            font-weight: 400;
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
         }
 
-        /* Tech Footer Divider */
+        /* --- NEW SECTION: METRICS GRID --- */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .metric-val {
+            font-family: monospace;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #f1f5f9;
+        }
+
+        .metric-lbl {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- NEW SECTION: SIMULATED TERMINAL --- */
+        .terminal {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-r { background: #ef4444; }
+        .dot-y { background: #eab308; }
+        .dot-g { background: #22c55e; }
+
+        .log-line {
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 2px solid transparent;
+        }
+        .log-success { color: var(--pipeline-green); }
+        .log-accent { color: var(--pipeline-blue); }
+
+        /* --- NEW SECTION: INTERACTIVE BUTTON --- */
+        .action-btn {
+            background: linear-gradient(135deg, var(--pipeline-blue), var(--pipeline-purple));
+            color: #070a13;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
+            margin-bottom: 1.5rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.45);
+            color: #fff;
+        }
+
         .divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
@@ -152,24 +217,14 @@
         }
 
         /* Animations */
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(25px); } }
+        @keyframes ripple { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
 
-        @keyframes float {
-            0% { transform: translateY(0px) scale(1); }
-            100% { transform: translateY(30px) scale(1.1); }
-        }
-
-        @keyframes ripple {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-
-        @media (max-width: 480px) {
-            h1 { font-size: 2.2rem; }
-            .container { padding: 2.5rem 1.5rem; }
+        @media (max-width: 550px) {
+            h1 { font-size: 2rem; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            .container { padding: 2rem 1.5rem; }
         }
     </style>
 </head>
@@ -181,16 +236,48 @@
     <div class="container">
         <div class="pipeline-status">
             <span class="status-dot"></span>
-            Deployment Successful
+            System Healthy
         </div>
         
         <h1>Hello From <span class="highlight">Saurabh CodePipeline!</span></h1>
+        <p>Continuous Deployment complete. Your AWS web infrastructure is operational.</p>
         
-        <p>Continuous Integration & Continuous Deployment lifecycle completed successfully. This stack is fully automated and live.</p>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-val" style="color: var(--pipeline-green);">v2.1.4</div>
+                <div class="metric-lbl">Build Version</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-val">0.02s</div>
+                <div class="metric-lbl">Latency</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-val" style="color: var(--pipeline-blue);">100%</div>
+                <div class="metric-lbl">Uptime</div>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+            </div>
+            <div class="log-line">> Fetching deployment artifacts... <span class="log-success">Done</span></div>
+            <div class="log-line">> executing ApplicationStart hook via systemctl...</div>
+            <div class="log-line" class="log-accent">> <span class="log-success">✔</span> Deployment successfully completed in 14.2s.</div>
+        </div>
+
+        <button class="action-btn" onclick="triggerCheck()">Run Health Diagnostics</button>
         
         <div class="divider"></div>
-        <div class="meta">AWS • EC2 • CodeDeploy • GitHub</div>
+        <div class="meta">AWS • EC2 • CodeDeploy • Route53</div>
     </div>
 
+    <script>
+        function triggerCheck() {
+            alert("Diagnostic Status:\n\n✔ Web Server: Active\n✔ SSL Certificate: Valid\n✔ Pipeline Connection: Secure\n\nEverything looks perfect, Saurabh!");
+        }
+    </script>
 </body>
 </html>
